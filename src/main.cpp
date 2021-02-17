@@ -21,9 +21,9 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
 
   pinMode(PIN_BUTTON_BELL1, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_BELL1), bell1, RISING);
+  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_BELL1), bell1, CHANGE);
   pinMode(PIN_BUTTON_BELL2, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_BELL2), bell2, RISING);
+  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_BELL2), bell2, CHANGE);
 
   pinMode(PIN_BELL1, OUTPUT);
   digitalWrite(PIN_BELL1, LOW);
