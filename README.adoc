@@ -1,0 +1,17 @@
+= FritzBell =
+
+https://github.com/xxthunder/FritzBell
+
+I am trying to build a simple door bell for my son. Schematics and more description will follow.
+Currently just fiddling around with the pieces.
+
+== Hardware ==
+
+This project currently uses the Keystudio LS0304 W5500 board:
+https://wiki.keyestudio.com/Ks0304_Keyestudio_W5500_ETHERNET_DEVELOPMENT_BOARD_(WITHOUT_POE)
+
+== Software ==
+
+https://github.com/Aypac/Arduino-TR-064-SOAP-Library
+https://github.com/arduino-libraries/Ethernet
+https://github.com/arduino-libraries/ArduinoHttpClient
