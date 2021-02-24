@@ -7,11 +7,11 @@ Currently just fiddling around with the pieces.
 
 == Hardware ==
 
-This project currently uses the Keystudio LS0304 W5500 board:
-https://wiki.keyestudio.com/Ks0304_Keyestudio_W5500_ETHERNET_DEVELOPMENT_BOARD_(WITHOUT_POE)
+This project currently uses the link:https://wiki.keyestudio.com/Ks0304_Keyestudio_W5500_ETHERNET_DEVELOPMENT_BOARD_%28WITHOUT_POE%29[Keystudio LS0304 W5500 board]
 
 == Software ==
 
-https://github.com/Aypac/Arduino-TR-064-SOAP-Library
-https://github.com/arduino-libraries/Ethernet
-https://github.com/arduino-libraries/ArduinoHttpClient
+* https://github.com/tzikis/ArduinoMD5
+* https://github.com/Aypac/Arduino-TR-064-SOAP-Library
+* https://github.com/arduino-libraries/Ethernet
+* https://github.com/arduino-libraries/ArduinoHttpClient
