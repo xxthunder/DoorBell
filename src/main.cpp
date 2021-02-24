@@ -77,20 +77,21 @@ void setup()
 
   // configure ethernet
   Serial.begin(9600);
-  if (Ethernet.begin(mac) == 0) 
+  if (Ethernet.begin(mac) == 0)
   {
-      Serial.println("Failed to configure Ethernet using DHCP");
-      // connection fails, stop program run. 
-      for(;;);
+    Serial.println("Failed to configure Ethernet using DHCP");
+    // connection fails, stop program run.
+    for (;;)
+      ;
   }
 
-// print out your local IP address
+  // print out your local IP address
   Serial.print("My IP address: ");
-  for (byte thisByte = 0; thisByte < 4; thisByte++) 
+  for (byte thisByte = 0; thisByte < 4; thisByte++)
   {
     // print out four byte IP address
     Serial.print(Ethernet.localIP()[thisByte], DEC);
-    Serial.print("."); 
+    Serial.print(".");
   }
 
   Serial.println();
@@ -106,20 +107,6 @@ void handleButtonEvents()
 
 void loop()
 {
-  //initialize serial
-  Serial.begin(9600);
-  //give it a second
-  delay(1000);
-  //generate the MD5 hash for our string
-  unsigned char* hash=MD5::make_hash("hello world");
-  //generate the digest (hex encoding) of our hash
-  char *md5str = MD5::make_digest(hash, 16);
-  free(hash);
-  //print it on our serial monitor
-  Serial.println(md5str);
-  //Give the Memory back to the System if you run the md5 Hash generation in a loop
-  free(md5str);
-
   handleButtonEvents();
   delay(5000);
   //enterSleep();
