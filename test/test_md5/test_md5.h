@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include "unity.h"
-
-#include "MD5.h"
+#include <unity.h>
+#include <MD5.h>
+#include "config.h"
 
 char *md5_calc(char const *input)
 {

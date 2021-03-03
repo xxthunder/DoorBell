@@ -17,14 +17,17 @@ void setup()
     UNITY_BEGIN();
 
     RUN_TEST(tc__HttpClient__SimpleHttp);
+    RUN_TEST(tc__HttpClient__FritzBox_connect);
 
     UNITY_END();
+
+    configure();
 }
 
 void loop()
 {
-    digitalWrite(13, HIGH);
+    digitalWrite(OUTPUT_LED1, HIGH);
     delay(100);
-    digitalWrite(13, LOW);
+    digitalWrite(OUTPUT_LED1, LOW);
     delay(500);
 }

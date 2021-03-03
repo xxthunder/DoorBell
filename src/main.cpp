@@ -4,19 +4,11 @@
 #include <avr/sleep.h>
 #include <SPI.h>
 #include <Ethernet.h>
-#include <MD5.h>
+#include "config.h"
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-
-// connected buttons
-#define INPUT_BUTTON1 PIND2
-#define INPUT_BUTTON2 PIND3
-
-// connected leds
-#define OUTPUT_LED1 8
-#define OUTPUT_LED2 9
+byte mac[] = ETHERNET_MAC;
 
 boolean BUTTON1_APPLIED;
 boolean BUTTON2_APPLIED;
@@ -58,13 +50,7 @@ void enterSleep(void)
  */
 void setup()
 {
-  // configure LEDs
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, HIGH);
-  pinMode(OUTPUT_LED1, OUTPUT);
-  digitalWrite(OUTPUT_LED1, LOW);
-  pinMode(OUTPUT_LED2, OUTPUT);
-  digitalWrite(OUTPUT_LED2, LOW);
+  configure();
 
   // configure buttons
   pinMode(INPUT_BUTTON1, INPUT_PULLUP);
@@ -75,8 +61,9 @@ void setup()
   BUTTON1_APPLIED = false;
   BUTTON2_APPLIED = false;
 
-  // configure ethernet
   Serial.begin(9600);
+
+  // configure ethernet
   if (Ethernet.begin(mac) == 0)
   {
     Serial.println("Failed to configure Ethernet using DHCP");

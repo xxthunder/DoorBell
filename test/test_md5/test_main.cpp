@@ -1,5 +1,4 @@
 #include "test_md5.h"
-#include "test_md5builder.h"
 
 // void setUp(void) {
 // // set stuff up here
@@ -21,17 +20,15 @@ void setup()
     RUN_TEST(tc__MD5__hello_world);
     RUN_TEST(tc__MD5__hello_another_string);
 
-    RUN_TEST(tc__MD5builder__empty_string);
-    RUN_TEST(tc__MD5builder__hello_world);
-    RUN_TEST(tc__MD5builder__another_string);
-
     UNITY_END();
+
+    configure();
 }
 
 void loop()
 {
-    digitalWrite(13, HIGH);
+    digitalWrite(OUTPUT_LED1, HIGH);
     delay(100);
-    digitalWrite(13, LOW);
+    digitalWrite(OUTPUT_LED1, LOW);
     delay(500);
 }

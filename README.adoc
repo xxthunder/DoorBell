@@ -1,8 +1,8 @@
-= FritzBell =
+= DoorBell =
 
-https://github.com/xxthunder/FritzBell
+https://github.com/xxthunder/DoorBell
 
-I am trying to build a simple door bell for my son. Schematics and more description will follow.
+I am trying to build a simple door bell for my house. Schematics and more description will follow.
 Currently just fiddling around with the pieces.
 
 == Hardware ==
@@ -12,6 +12,5 @@ This project currently uses the link:https://wiki.keyestudio.com/Ks0304_Keyestud
 == Software ==
 
 * https://github.com/tzikis/ArduinoMD5
-* https://github.com/Aypac/Arduino-TR-064-SOAP-Library
 * https://github.com/arduino-libraries/Ethernet
 * https://github.com/arduino-libraries/ArduinoHttpClient
