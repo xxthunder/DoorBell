@@ -1,4 +1,4 @@
-#include "test_md5.h"
+#include "test_mqtt.h"
 
 // void setUp(void) {
 // // set stuff up here
@@ -16,19 +16,18 @@ void setup()
 
     UNITY_BEGIN();
 
-    RUN_TEST(tc__MD5__empty_string);
-    RUN_TEST(tc__MD5__hello_world);
-    RUN_TEST(tc__MD5__hello_another_string);
+    RUN_TEST(tc__mqttclient);
 
     UNITY_END();
 
-    configure();
+    pinMode(OUTPUT_B1, OUTPUT);
+    digitalWrite(OUTPUT_B1, LOW);
 }
 
 void loop()
 {
-    digitalWrite(OUTPUT_LED1, HIGH);
+    digitalWrite(OUTPUT_B1, HIGH);
     delay(100);
-    digitalWrite(OUTPUT_LED1, LOW);
+    digitalWrite(OUTPUT_B1, LOW);
     delay(500);
 }

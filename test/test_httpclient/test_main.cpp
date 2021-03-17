@@ -21,13 +21,14 @@ void setup()
 
     UNITY_END();
 
-    configure();
+    pinMode(OUTPUT_B1, OUTPUT);
+    digitalWrite(OUTPUT_B1, LOW);
 }
 
 void loop()
 {
-    digitalWrite(OUTPUT_LED1, HIGH);
+    digitalWrite(OUTPUT_B1, HIGH);
     delay(100);
-    digitalWrite(OUTPUT_LED1, LOW);
+    digitalWrite(OUTPUT_B1, LOW);
     delay(500);
 }

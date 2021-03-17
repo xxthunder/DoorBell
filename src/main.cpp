@@ -4,29 +4,44 @@
 #include <avr/sleep.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#include <PubSubClient.h>
 #include "config.h"
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
 byte mac[] = ETHERNET_MAC;
+String ip = "";
+const char *broker = MQTT_BROKER;
+EthernetClient ethClient;
+PubSubClient mqttClient;
 
-boolean BUTTON1_APPLIED;
-boolean BUTTON2_APPLIED;
-
-/**
- * Interrupt service routine for the first door bell
- */
-void isrBell1()
+typedef struct
 {
-  BUTTON1_APPLIED = true;
+  boolean applied;
+  uint8_t counter;
+  uint8_t outPin;
+} DoorBell;
+
+DoorBell doorBells[NUM_DOORBELLS];
+
+void isrDoorBell1()
+{
+  doorBells[0].applied = true;
 }
 
-/**
- * Interrupt service routine for the second door bell
- */
-void isrBell2()
+void isrDoorBell2()
 {
-  BUTTON2_APPLIED = true;
+  doorBells[1].applied = true;
+}
+
+void isrDoorBell3()
+{
+  doorBells[2].applied = true;
+}
+
+void isrDoorBell4()
+{
+  doorBells[3].applied = true;
 }
 
 /**
@@ -34,9 +49,12 @@ void isrBell2()
  */
 void enterSleep(void)
 {
+  for (uint8_t i = 0; i < NUM_DOORBELLS; i++)
+  {
+    digitalWrite(doorBells[i].outPin, LOW);
+  }
+
   digitalWrite(LED_BUILTIN, LOW);
-  digitalWrite(OUTPUT_LED1, LOW);
-  digitalWrite(OUTPUT_LED2, LOW);
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_enable();
   sleep_mode();
@@ -50,20 +68,59 @@ void enterSleep(void)
  */
 void setup()
 {
-  configure();
+#ifdef OUTPUT_B1
+  doorBells[0].outPin = OUTPUT_B1;
+#endif
+#ifdef OUTPUT_B2
+  doorBells[1].outPin = OUTPUT_B2;
+#endif
+#ifdef OUTPUT_B3
+  doorBells[2].outPin = OUTPUT_B3;
+#endif
+#ifdef OUTPUT_B4
+  doorBells[3].outPin = OUTPUT_B4;
+#endif
 
-  // configure buttons
-  pinMode(INPUT_BUTTON1, INPUT_PULLUP);
-  pinMode(INPUT_BUTTON2, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(INPUT_BUTTON1), isrBell1, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(INPUT_BUTTON2), isrBell2, CHANGE);
-  //delay(5000);
-  BUTTON1_APPLIED = false;
-  BUTTON2_APPLIED = false;
+  // configure LEDs
+  pinMode(LED_BUILTIN, OUTPUT);
+  for (uint8_t i = 0; i < NUM_DOORBELLS; i++)
+  {
+    pinMode(doorBells[i].outPin, OUTPUT);
+    digitalWrite(doorBells[i].outPin, LOW);
+  }
+
+// configure buttons
+#ifdef INPUT_B1
+  pinMode(INPUT_B1, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(INPUT_B1), isrDoorBell1, FALLING);
+#endif
+#ifdef INPUT_B2
+  pinMode(INPUT_B2, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(INPUT_B2), isrDoorBell2, FALLING);
+#endif
+#ifdef INPUT_B3
+  pinMode(INPUT_B3, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(INPUT_B3), isrDoorBell3, FALLING);
+#endif
+#ifdef INPUT_B4
+  pinMode(INPUT_B4, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(INPUT_B4), isrDoorBell4, FALLING);
+#endif
+
+  for (uint8_t i = 0; i < NUM_DOORBELLS; i++)
+  {
+    doorBells[i].applied = false;
+    doorBells[i].counter = 0;
+  }
 
   Serial.begin(9600);
+  while (!Serial)
+  {
+  };
+  Serial.println(F("xxthunder/DoorBell"));
+  Serial.println();
 
-  // configure ethernet
+  // configure ethernet using DHCP
   if (Ethernet.begin(mac) == 0)
   {
     Serial.println("Failed to configure Ethernet using DHCP");
@@ -72,30 +129,69 @@ void setup()
       ;
   }
 
-  // print out your local IP address
-  Serial.print("My IP address: ");
-  for (byte thisByte = 0; thisByte < 4; thisByte++)
-  {
-    // print out four byte IP address
-    Serial.print(Ethernet.localIP()[thisByte], DEC);
-    Serial.print(".");
-  }
-
+  Serial.println(F("Ethernet configured via DHCP"));
+  Serial.print("IP address: ");
+  Serial.println(Ethernet.localIP());
   Serial.println();
+
+  ip = String(Ethernet.localIP()[0]);
+  ip = ip + ".";
+  ip = ip + String(Ethernet.localIP()[1]);
+  ip = ip + ".";
+  ip = ip + String(Ethernet.localIP()[2]);
+  ip = ip + ".";
+  ip = ip + String(Ethernet.localIP()[3]);
+
+  // setup mqtt client
+  mqttClient.setClient(ethClient);
+  mqttClient.setServer(broker, 1883);
+  if (mqttClient.connect(MQTT_ID))
+  {
+    Serial.println("Connection has been established, well done");
+    mqttClient.publish(MQTT_ID "/ip", ip.c_str());
+  }
+  else
+  {
+    Serial.println("Looks like the server connection failed...");
+  }
 }
 
 void handleButtonEvents()
 {
-  digitalWrite(OUTPUT_LED1, BUTTON1_APPLIED ? HIGH : LOW);
-  digitalWrite(OUTPUT_LED2, BUTTON2_APPLIED ? HIGH : LOW);
-  BUTTON1_APPLIED = false;
-  BUTTON2_APPLIED = false;
+  for (uint8_t i = 0; i < NUM_DOORBELLS; i++)
+  {
+    char topic[11];
+    sprintf(topic, "DoorBell/b%d", i + 1);
+    if (doorBells[i].applied)
+    {
+      mqttClient.publish(topic, "ON");
+      digitalWrite(doorBells[i].outPin, HIGH);
+      doorBells[i].applied = false;
+      doorBells[i].counter = LOOP_CNT_APPLIED;
+    }
+    else
+    {
+      if (doorBells[i].counter > 0)
+      {
+        doorBells[i].counter--;
+      }
+      else
+      {
+        mqttClient.publish(topic, "OFF");
+        digitalWrite(doorBells[i].outPin, LOW);
+        doorBells[i].counter = LOOP_CNT_IDLE;
+      }
+    }
+  }
 }
 
 void loop()
 {
   handleButtonEvents();
-  delay(5000);
+  if (!mqttClient.connected())
+    mqttClient.connect(MQTT_ID);
+  mqttClient.loop();
+  delay(LOOP_TIME_MS);
   //enterSleep();
 }
 

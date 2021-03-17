@@ -43,7 +43,7 @@ void tc__HttpClient__FritzBox_connect(void)
     TEST_ASSERT_EQUAL_INT(1, conStat);
 
     EthernetClient c;
-    HttpClient http(c, ROUTER_HOSTNAME, ROUTER_PORT);
+    HttpClient http(c, "fritz.box", 49000);
     int err = 0;
     int bodyLen = 0;
 

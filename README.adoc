@@ -14,3 +14,8 @@ This project currently uses the link:https://wiki.keyestudio.com/Ks0304_Keyestud
 * https://github.com/tzikis/ArduinoMD5
 * https://github.com/arduino-libraries/Ethernet
 * https://github.com/arduino-libraries/ArduinoHttpClient
+
+== References/Ideas ==
+
+* https://www.instructables.com/A-Simple-MQTT-PubSub-Node-With-Arduino-UNO-and-W51/
+* https://www.reichelt.com/magazin/en/build-smart-doorbell-arduino/
