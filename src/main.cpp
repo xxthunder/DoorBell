@@ -1,5 +1,3 @@
-#ifndef UNIT_TEST // disable program main loop while unit testing in progress
-
 #include <Arduino.h>
 #include <avr/sleep.h>
 #include <SPI.h>
@@ -145,7 +143,7 @@ void setup()
   // setup mqtt client
   mqttClient.setClient(ethClient);
   mqttClient.setServer(broker, 1883);
-  if (mqttClient.connect(MQTT_ID))
+  if (mqttClient.connect(MQTT_ID, MQTT_USER, MQTT_PASSWD))
   {
     Serial.println("Connection has been established, well done");
     mqttClient.publish(MQTT_ID "/ip", ip.c_str());
@@ -189,10 +187,8 @@ void loop()
 {
   handleButtonEvents();
   if (!mqttClient.connected())
-    mqttClient.connect(MQTT_ID);
+    mqttClient.connect(MQTT_ID, MQTT_USER, MQTT_PASSWD);
   mqttClient.loop();
   delay(LOOP_TIME_MS);
   //enterSleep();
 }
-
-#endif

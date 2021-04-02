@@ -16,18 +16,16 @@ void tc__mqttclient(void)
     EthernetHardwareStatus status = Ethernet.hardwareStatus();
     TEST_ASSERT_EQUAL_INT(EthernetW5500, status);
 
-    const char *broker = "openhabian";
+    const char *broker = MQTT_BROKER;
     EthernetClient ethClient;
-    PubSubClient mqttClient(ethClient);
-    mqttClient.setServer(broker, 1883);
-    TEST_ASSERT_EQUAL(true, mqttClient.connect("DoorBellClient"));
-
-    mqttClient.subscribe("DoorBell");
-    TEST_ASSERT_EQUAL(true, mqttClient.publish("DoorBell", "Hello World"));
+    PubSubClient mqttClient(broker, 1883, ethClient);
+    mqttClient.setBufferSize(255);
+    TEST_ASSERT_EQUAL(true, mqttClient.connect(MQTT_ID, MQTT_USER, MQTT_PASSWD));
+    TEST_ASSERT_EQUAL(true, mqttClient.publish(MQTT_ID, "Hello World"));
 
     /*
     - Debug command on openhab:
-    openhabian@openhabian:~ $ mosquitto_sub -d -t "DoorBell"
+    openhabian@openhabian:~ $ mosquitto_sub -d -t "#" -u *** -P "***"
     Client mosqsub|8395-openhabian sending CONNECT
     Client mosqsub|8395-openhabian received CONNACK (0)
     Client mosqsub|8395-openhabian sending SUBSCRIBE (Mid: 1, Topic: DoorBell, QoS: 0)

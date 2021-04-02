@@ -20,7 +20,9 @@
         0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED \
     }
 
-#define MQTT_BROKER "openhabian"
+#define MQTT_BROKER "<your broker ip or hostname>"
 #define MQTT_ID "DoorBell"
+#define MQTT_USER "***"
+#define MQTT_PASSWD "***"
 
 #endif
