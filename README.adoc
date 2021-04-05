@@ -5,15 +5,14 @@ https://github.com/xxthunder/DoorBell
 I am trying to build a simple door bell for my house. Schematics and more description will follow.
 Currently just fiddling around with the pieces.
 
-== Hardware ==
+== Hardware/Part List ==
 
 This project currently uses the link:https://wiki.keyestudio.com/Ks0304_Keyestudio_W5500_ETHERNET_DEVELOPMENT_BOARD_%28WITHOUT_POE%29[Keystudio LS0304 W5500 board]
 
 == Software ==
 
-* https://github.com/tzikis/ArduinoMD5
-* https://github.com/arduino-libraries/Ethernet
-* https://github.com/arduino-libraries/ArduinoHttpClient
+* link:https://github.com/arduino-libraries/Ethernet[Arduino Ethernet Library (2.0.0)]
+* link:https://github.com/knolleary/pubsubclient[Arduino Client for MQTT (v2.8)]
 
 == References/Ideas ==
 
