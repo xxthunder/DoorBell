@@ -15,7 +15,7 @@ PubSubClient mqttClient;
 
 typedef struct
 {
-  boolean applied;
+  uint16_t applied;
   uint8_t counter;
   uint8_t outPin;
 } DoorBell;
@@ -24,26 +24,28 @@ DoorBell doorBells[NUM_DOORBELLS];
 
 void isrDoorBell1()
 {
-  doorBells[0].applied = true;
+  doorBells[0].applied++;
 }
 
 void isrDoorBell2()
 {
-  doorBells[1].applied = true;
+  doorBells[1].applied++;
 }
 
 void isrDoorBell3()
 {
-  doorBells[2].applied = true;
+  doorBells[2].applied++;
 }
 
 void isrDoorBell4()
 {
-  doorBells[3].applied = true;
+  doorBells[3].applied++;
 }
 
 /**
  * Safe power when nothing to do
+ * 
+ * TODO: not working properly, please check!
  */
 void enterSleep(void)
 {
@@ -107,7 +109,7 @@ void setup()
 
   for (uint8_t i = 0; i < NUM_DOORBELLS; i++)
   {
-    doorBells[i].applied = false;
+    doorBells[i].applied = 0;
     doorBells[i].counter = 0;
   }
 
@@ -159,12 +161,18 @@ void handleButtonEvents()
   for (uint8_t i = 0; i < NUM_DOORBELLS; i++)
   {
     char topic[11];
+    char cnt[11];
     sprintf(topic, "DoorBell/b%d", i + 1);
-    if (doorBells[i].applied)
+    if (doorBells[i].applied > 0)
     {
       mqttClient.publish(topic, "ON");
+
+      // TODO: no idea, if I ever need some filtering. Remove it, when proven in use.
+      sprintf(cnt, "count: %d", doorBells[i].applied);
+      mqttClient.publish(topic, cnt);
+
       digitalWrite(doorBells[i].outPin, HIGH);
-      doorBells[i].applied = false;
+      doorBells[i].applied = 0;
       doorBells[i].counter = LOOP_CNT_APPLIED;
     }
     else
